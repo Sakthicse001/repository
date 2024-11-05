@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unique Love Calculator</title>
+  <style>
+    /* Basic Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+      color: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .calculator-container {
+      z-index: 2;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 20px 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 0.5em;
+    }
+
+    p {
+      font-size: 1.2em;
+    }
+
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #ff4e6a;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #ff6f81;
+    }
+
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-size: 1.5em;
+      animation: fadeIn 1s ease;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      margin: 0 5px;
+      background: #fff;
+      border-radius: 50%;
+      animation: blink 1.5s infinite;
+    }
+
+    .dot:nth-child(1) { animation-delay: 0s; }
+    .dot:nth-child(2) { animation-delay: 0.3s; }
+    .dot:nth-child(3) { animation-delay: 0.6s; }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .score {
+      font-size: 2em;
+      font-weight: bold;
+      margin-top: 20px;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Animated Heart Background */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1), rgba(0,0,0,0) 70%);
+      animation: gradientShift 10s ease-in-out infinite alternate;
+      z-index: 1;
+    }
+
+    @keyframes gradientShift {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      100% { transform: translate(50%, 50%) scale(1.5); }
+    }
+
+    .heart {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: red;
+      transform: rotate(45deg);
+      top: -10%;
+      left: 50%;
+      animation: floatHearts 7s ease-in-out infinite;
+      opacity: 0.7;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: red;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -50%;
+      left: 0;
+    }
+
+    .heart::after {
+      left: -50%;
+      top: 0;
+    }
+
+    @keyframes floatHearts {
+      0% { transform: translateY(0) scale(1); opacity: 0.7; }
+      100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator-container">
+    <h1>❤️ Love Calculator ❤️</h1>
+    <p>Enter your names to calculate compatibility</p>
+    <form id="loveForm">
+      <input type="text" id="name1" placeholder="Your Name" required>
+      <input type="text" id="name2" placeholder="Partner's Name" required>
+      <button type="submit">Calculate Love ❤️</button>
+    </form>
+    <div class="result">
+      <div class="loading hidden" id="loading">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <p> sakthi Calculating...</p>
+      </div>
+      <div id="score" class="score hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("loveForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+      const name1 = document.getElementById("name1").value.trim();
+      const name2 = document.getElementById("name2").value.trim();
+      if (name1 && name2) {
+        showLoading();
+        setTimeout(() => {
+          const score = calculateLoveScore(name1, name2);
+          showScore(score);
+        }, 2000);
+      }
+    });
+
+    function showLoading() {
+      document.getElementById("loading").classList.remove("hidden");
+      document.getElementById("score").classList.add("hidden");
+    }
+
+    function showScore(score) {
+      document.getElementById("loading").classList.add("hidden");
+      const scoreElement = document.getElementById("score");
+      scoreElement.textContent = `Compatibility Score: ${score}%`;
+      scoreElement.classList.remove("hidden");
+    }
+
+    function calculateLoveScore(name1, name2) {
+      let combinedString = (name1 + name2).toLowerCase();
+      let sum = 0;
+      for (let char of combinedString) {
+        sum += char.charCodeAt(0);
+      }
+      return (sum % 100) + 1;
+    }
+
+    // Generate floating hearts
+    function createHearts() {
+      for (let i = 0; i < 20; i++) {
+        let heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.animationDuration = Math.random() * 3 + 5 + "s";
+        document.body.appendChild(heart);
+      }
+    }
+    createHearts();
+  </script>
+</body>
+</html>
